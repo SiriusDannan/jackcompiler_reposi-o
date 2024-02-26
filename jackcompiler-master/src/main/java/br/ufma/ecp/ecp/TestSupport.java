@@ -1,4 +1,4 @@
-package br.ufma.ecp;
+package br.ufma.ecp.ecp;
 
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package br.ufma.ecp;
+package br.ufma.ecp.ecp;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 
+import br.ufma.ecp.Scanner;
 import br.ufma.ecp.token.Token;
 import br.ufma.ecp.token.TokenType;
 

@@ -1,10 +1,12 @@
-package br.ufma.ecp;
+package br.ufma.ecp.ecp;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.Test;
+
+import br.ufma.ecp.Parser;
 
 public class ParserTest extends TestSupport {
 
