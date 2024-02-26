@@ -126,9 +126,14 @@ public class Parser {
             case FALSE:
             case NULL:
             case TRUE:
+            expectPeek(FALSE, NULL, TRUE);
+            vmWriter.writePush(Segment.CONST, 0);
+            if (currentToken.type == TRUE)
+            vmWriter.writeArithmetic(Command.NOT);
+            break;
             case THIS:
-                expectPeek(FALSE, NULL, TRUE, THIS);
-                break;
+            expectPeek(THIS);
+            vmWriter.writePush(Segment.POINTER, 0);
             case IDENT:
                 expectPeek(IDENT);
                 if (peekTokenIs(LPAREN) || peekTokenIs(DOT)) {
