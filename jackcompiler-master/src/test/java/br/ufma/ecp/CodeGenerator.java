@@ -1,8 +1,10 @@
-package br.ufma.ecp.ecp;
+package br.ufma.ecp;
+
+import static org.junit.Assert.*;
 
 import java.nio.charset.StandardCharsets;
 
-import br.ufma.ecp.Parser;
+import org.junit.Test;
 public class CodeGenerator extends TestSupport{
     @Test
     public void testInt () {
