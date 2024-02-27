@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch External Terminal",
+            "request": "launch",
+            "console": "externalTerminal",
+            "mainClass": ""
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "br.ufma.ecp.App",
+            "projectName": "jackcompiler",
+            "args": "C:\\Users\\edisi\\OneDrive\\Documentos\\nand2tetris\\projects\\11\\ConvertToBin"
+        }
+    ]
+
+}
+
+//COMO O SENHOR PODE VER,O NOTEBOOK QUE ESTOU USANDO É BEM LENTO.
+//VOU RODAR MAIS UMA VEZ.
+//NUNCA ENTENDO ESSES ERROS DE LAUNCH.JSON...
+//VOU RODAR MAIS UMA VEZ
+//RODANDO
+//AGORA FUNCIONOU..
+//TESTAREI O PONG AGORA
+//O PONG DEU UM ERRO DIFERENTE ,VOU TESTAR MAIS UMA VEZ
+//ACHO QUE AO APAGAR O TESTE QUE EU FIZ ANTES,APAGUEI ALGUM ARQUIVO IMPORTANTE
+//VOU TESTAR O CONVERTOBIN
+//agora irei passar no emulator
+//ESQUECI DE TIRAR A ANIMAÇÃO
+// ESSE FOI O FINAL DO MEU PROJETO PROFESSOR.
