@@ -150,7 +150,14 @@ public class Parser {
                     if (peekTokenIs(LBRACKET)) { // array
                         expectPeek(LBRACKET);
                         parseExpression();
-                        expectPeek(RBRACKET);                 
+                        vmWriter.writePush(kind2Segment(sym.kind()), sym.index());
+                        vmWriter.writeArithmetic(Command.ADD);
+        
+
+                        expectPeek(RBRACKET);
+                        vmWriter.writePop(Segment.POINTER, 1); // pop address pointer into pointer 1
+                        vmWriter.writePush(Segment.THAT, 0);   // push the value of the address pointer back onto stack
+        
                     } else {
                         vmWriter.writePush(kind2Segment(sym.kind()), sym.index());
                     }
@@ -217,18 +224,29 @@ public class Parser {
 
         var symbol = symbTable.resolve(currentToken.lexeme);
 
-        if (peekTokenIs(TokenType.LBRACKET)) {
-            expectPeek(TokenType.LBRACKET);
-            parseExpression();         
-            expectPeek(TokenType.RBRACKET);
+        if (peekTokenIs(LBRACKET)) { // array
+            expectPeek(LBRACKET);
+            parseExpression();
+            
+            vmWriter.writePush(kind2Segment(symbol.kind()), symbol.index());
+            vmWriter.writeArithmetic(Command.ADD);
+    
+            expectPeek(RBRACKET);
+
+
 
             isArray = true;
         }
 
-        expectPeek(TokenType.EQ);
+        expectPeek(EQ);
         parseExpression();
 
         if (isArray) {
+
+            vmWriter.writePop(Segment.TEMP, 0);    // push result back onto stack
+            vmWriter.writePop(Segment.POINTER, 1); // pop address pointer into pointer 1
+            vmWriter.writePush(Segment.TEMP, 0);   // push result back onto stack
+            vmWriter.writePop(Segment.THAT, 0);    // Store right hand side evaluation in THAT 0.
     
 
         } else {
@@ -239,39 +257,68 @@ public class Parser {
         expectPeek(TokenType.SEMICOLON);
         printNonTerminal("/letStatement");
     }
-
     // subroutineCall -> subroutineName '(' expressionList ')' | (className|varName)
     // '.' subroutineName '(' expressionList ')
-    void parseSubroutineCall() {
-        if (peekTokenIs(LPAREN)) {
+    void parseSubroutineCall() {     
+        
+
+        var nArgs = 0;
+
+        var ident = currentToken.lexeme;
+        var symbol = symbTable.resolve(ident); // classe ou objeto
+        var functionName = ident + ".";
+
+        if (peekTokenIs(LPAREN)) { // método da propria classe
             expectPeek(LPAREN);
-            parseExpressionList();
+            vmWriter.writePush(Segment.POINTER, 0);
+            nArgs = parseExpressionList() + 1;
             expectPeek(RPAREN);
+            functionName = className + "." + ident;
         } else {
+            // pode ser um metodo de um outro objeto ou uma função
             expectPeek(DOT);
-            expectPeek(IDENT);
+            expectPeek(IDENT); // nome da função
+
+            if (symbol != null) { // é um metodo
+                functionName = symbol.type() + "." + currentToken.lexeme;
+                vmWriter.writePush(kind2Segment(symbol.kind()), symbol.index());
+                nArgs = 1; // do proprio objeto
+            } else {
+                functionName += currentToken.lexeme; // é uma função
+            }
+
             expectPeek(LPAREN);
-            parseExpressionList();
+            nArgs += parseExpressionList();
+
             expectPeek(RPAREN);
         }
-    }
 
-    void parseExpressionList() {
+        vmWriter.writeCall(functionName, nArgs);
+  }
+
+
+    int parseExpressionList() {
         printNonTerminal("expressionList");
+
+        var nArgs = 0;
 
         if (!peekTokenIs(RPAREN)) // verifica se tem pelo menos uma expressao
         {
             parseExpression();
+            nArgs = 1;
         }
 
         // procurando as demais
         while (peekTokenIs(COMMA)) {
             expectPeek(COMMA);
             parseExpression();
+            nArgs++;
         }
 
         printNonTerminal("/expressionList");
+        return nArgs;
     }
+
     // 'do' subroutineCall ';'
     public void parseDo() {
         printNonTerminal("doStatement");
@@ -279,6 +326,7 @@ public class Parser {
         expectPeek(IDENT);
         parseSubroutineCall();
         expectPeek(SEMICOLON);
+        vmWriter.writePop(Segment.TEMP, 0);
         printNonTerminal("/doStatement");
     }
 
@@ -500,6 +548,16 @@ public class Parser {
                     var nlocals = symbTable.varCount(Kind.VAR);
     
             vmWriter.writeFunction(functionName, nlocals);
+            if (subroutineType == CONSTRUCTOR) {
+                vmWriter.writePush(Segment.CONST, symbTable.varCount(Kind.FIELD));
+                vmWriter.writeCall("Memory.alloc", 1);
+                vmWriter.writePop(Segment.POINTER, 0);
+            }
+    
+            if (subroutineType == METHOD) {
+                vmWriter.writePush(Segment.ARG, 0);
+                vmWriter.writePop(Segment.POINTER, 0);
+            }
     
             parseStatements();
             expectPeek(RBRACE);
