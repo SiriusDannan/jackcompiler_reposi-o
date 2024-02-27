@@ -68,4 +68,16 @@ public class SymbolTable {
         return countVars.get(kind);
     }
 
+    public Kind kind() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'kind'");
+    }
+
+    public int index() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'index'");
+    }
+
+   
+
 }

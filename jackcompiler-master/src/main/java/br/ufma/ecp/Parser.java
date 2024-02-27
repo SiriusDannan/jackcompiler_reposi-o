@@ -208,19 +208,35 @@ public class Parser {
 
     // letStatement -> 'let' identifier( '[' expression ']' )? '=' expression ';’
     void parseLet() {
-        printNonTerminal("letStatement");
-        expectPeek(LET);
-        expectPeek(IDENT);
 
-        if (peekTokenIs(LBRACKET)) {
-            expectPeek(LBRACKET);
-            parseExpression();
-            expectPeek(RBRACKET);
+        var isArray = false;
+
+        printNonTerminal("letStatement");
+        expectPeek(TokenType.LET);
+        expectPeek(TokenType.IDENT);
+
+        var symbol = symbTable.resolve(currentToken.lexeme);
+
+        if (peekTokenIs(TokenType.LBRACKET)) {
+            expectPeek(TokenType.LBRACKET);
+            parseExpression();         
+            expectPeek(TokenType.RBRACKET);
+
+            isArray = true;
         }
 
-        expectPeek(EQ);
+        expectPeek(TokenType.EQ);
         parseExpression();
-        expectPeek(SEMICOLON);
+
+        if (isArray) {
+    
+
+        } else {
+            vmWriter.writePop(kind2Segment(symbol.kind()), symbol.index());
+        }
+
+
+        expectPeek(TokenType.SEMICOLON);
         printNonTerminal("/letStatement");
     }
 
