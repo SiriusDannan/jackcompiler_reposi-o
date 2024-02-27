@@ -178,8 +178,15 @@ public class Parser {
     }
 
     private Segment kind2Segment(Kind kind) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'kind2Segment'");
+        if (kind == Kind.STATIC)
+            return Segment.STATIC;
+        if (kind == Kind.FIELD)
+            return Segment.THIS;
+        if (kind == Kind.VAR)
+            return Segment.LOCAL;
+        if (kind == Kind.ARG)
+            return Segment.ARG;
+        return null;
     }
 
     static public boolean isOperator(String op) {
@@ -466,6 +473,7 @@ public class Parser {
     
             printNonTerminal("/parameterList");
         }
+
         void parseSubroutineBody(String functionName, TokenType subroutineType) {
 
             printNonTerminal("subroutineBody");
